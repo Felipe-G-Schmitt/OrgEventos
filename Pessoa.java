@@ -23,6 +23,7 @@ public class Pessoa {
         return false;
     }
 
+    @Override
     public String toString() {
         return "ID: " + id + " | Nome: " + nome;
     }
@@ -30,32 +31,48 @@ public class Pessoa {
 
 class Participante extends Pessoa {
     private String telefone;
-    private String notifica; 
+    private Number idNotificacao;
 
-    public Participante(int id, String nome, String telefone, String notifica) {
+    public Participante(int id, String nome, String telefone, Number idNotificacao) {
         super(id, nome);
         this.telefone = telefone;
-        this.notifica = notifica;
+        this.idNotificacao = idNotificacao;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public Number getIdNotificacao() {
+        return idNotificacao;
     }
 
     @Override
     public String toString() {
-        return super.toString() + " | Telefone: " + telefone + " | Notificação: " + notifica;
+        return super.toString() + " | Telefone: " + telefone + " | Notificação: " + idNotificacao;
     }
 }
 
 class Organizador extends Pessoa {
     private String email;
-    private String notifica; 
+    private Number idNotificacao;
 
-    public Organizador(int id, String nome, String email, String notifica) {
+    public Organizador(int id, String nome, String email, Number idNotificacao) {
         super(id, nome);
         this.email = email;
-        this.notifica = notifica;
+        this.idNotificacao = idNotificacao;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public Number getIdNotificacao() {
+        return idNotificacao;
     }
 
     @Override
     public String toString() {
-        return super.toString() + " | Email: " + email + " | Notificação: " + notifica;
+        return super.toString() + " | Email: " + email + " | Notificação: " + idNotificacao;
     }
 }
