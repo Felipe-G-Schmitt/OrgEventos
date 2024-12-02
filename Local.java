@@ -15,7 +15,27 @@ public class Local {
         locais.add(this);
     }
 
-    //Verificar se o id ja existe
+    public Number getId() {
+        return id;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
+
+    public Number getVagas() {
+        return vagas;
+    }
+
+    public void setVagas(Number vagas) {
+        this.vagas = vagas;
+    }
+
+    // Verificar se o ID já existe
     public static boolean idExiste(Number id) {
         for (Local local : locais) {
             if (local.id.equals(id)) {
@@ -25,6 +45,7 @@ public class Local {
         return false;
     }
 
+    @Override
     public String toString() {
         return "Id: " + id + " | Descrição: " + descricao + " | Vagas: " + vagas;
     }
