@@ -24,8 +24,9 @@ public class Menu {
             System.out.println("2 - Enviar Notificação");
             System.out.println("3 - Alterações");
             System.out.println("4 - Listas");
-            System.out.println("5 - Adicionar");
-            System.out.println("6 - Sair");
+            System.out.println("5 - Deletar");
+            System.out.println("6 - Adicionar");
+            System.out.println("7 - Sair");
             
             System.out.println("\nDigite a opção desejada:");
             opcao = scanner.nextLine();
@@ -853,7 +854,111 @@ public class Menu {
                 }
                 break;
 
-                case "5": // Adicionar
+                case "5": //Deletar
+                try {
+                    boolean voltarDelete = false;
+                    do {
+                    System.out.println("\n-=-=-=-=--=-==-=-=-=-=");
+                    System.out.println("Deletar");
+                    System.out.println("-=-=-=-=--=-==-=-=-=-=");
+
+                    System.out.println("1 - Participante");
+                    System.out.println("2 - Organizador");
+                    System.out.println("3 - Evento");
+                    System.out.println("4 - Local");
+                    System.out.println("5 - Voltar");
+                    String opcaoDeletar = scanner.nextLine();
+                    switch (opcaoDeletar) {
+                        case "1":
+                            try {
+                                System.out.println("Deletar Participante");
+
+                                System.out.println("Informe o ID do participante:");
+                                int idParticipante = scanner.nextInt();
+                                scanner.nextLine(); 
+
+                                try (Connection connection = DriverManager.getConnection(url, user, password)) {
+                                    Statement statement = connection.createStatement();
+                                    statement.executeUpdate("DELETE FROM participante WHERE id = " + idParticipante);
+                                    statement.executeUpdate("DELETE FROM pessoa WHERE id = " + idParticipante);
+                                    System.out.println("Participante deletado com sucesso!");
+                                } catch (SQLException e) {
+                                    System.out.println("Erro ao deletar participante no banco de dados: " + e.getMessage());
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            break;
+                        case "2":
+                            try {
+                                System.out.println("Deletar Organizador");
+
+                                System.out.println("Informe o ID do organizador:");
+                                int idOrganizador = scanner.nextInt();
+                                scanner.nextLine(); 
+
+                                try (Connection connection = DriverManager.getConnection(url, user, password)) {
+                                    Statement statement = connection.createStatement();
+                                    statement.executeUpdate("DELETE FROM organizador WHERE id = " + idOrganizador);
+                                    statement.executeUpdate("DELETE FROM pessoa WHERE id = " + idOrganizador);
+                                    System.out.println("Organizador deletado com sucesso!");
+                                } catch (SQLException e) {
+                                    System.out.println("Erro ao deletar organizador no banco de dados: " + e.getMessage());
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            break;
+                        case "3":
+                            try {
+                                System.out.println("Deletar Evento");
+
+                                System.out.println("Informe o ID do evento:");
+                                int idEvento = scanner.nextInt();
+                                scanner.nextLine(); 
+
+                                try (Connection connection = DriverManager.getConnection(url, user, password)) {
+                                    Statement statement = connection.createStatement();
+                                    statement.executeUpdate("DELETE FROM evento WHERE id = " + idEvento);
+                                    System.out.println("Evento deletado com sucesso!");
+                                } catch (SQLException e) {
+                                    System.out.println("Erro ao deletar evento no banco de dados: " + e.getMessage());
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            break;
+                        case "4":
+                            try {
+                                System.out.println("Deletar Local");
+
+                                System.out.println("Informe o ID do local:");
+                                int idLocal = scanner.nextInt();
+                                scanner.nextLine(); 
+
+                                try (Connection connection = DriverManager.getConnection(url, user, password)) {
+                                    Statement statement = connection.createStatement();
+                                    statement.executeUpdate("DELETE FROM local WHERE id = " + idLocal);
+                                    System.out.println("Local deletado com sucesso!");
+                                } catch (SQLException e) {
+                                    System.out.println("Erro ao deletar local no banco de dados: " + e.getMessage());
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            break;
+                        case "5":
+                            System.out.println("Voltando...");
+                            voltarDelete = true;
+                            break;
+                        }
+                    } while (!voltarDelete);
+                } catch (Exception e) {
+                    System.out.println("");
+                }
+                break;
+
+                case "6": // Adicionar
                 boolean AddCadastro = false; 
                 do {
                     System.out.println("\n-=-=-=-=--=-==-=-=-=-=");
@@ -986,7 +1091,7 @@ public class Menu {
                 } while (!AddCadastro);
                 break;             
 
-                case "6": // Sair
+                case "7": // Sair
                 System.out.println("\nSaindo...");
                 break;
 
@@ -997,4 +1102,4 @@ public class Menu {
         } while (opcao != "6");
         scanner.close();
     }
-} // Perfeitamente nas 1000 linhas 
+} 
