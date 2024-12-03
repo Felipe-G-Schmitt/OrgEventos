@@ -41,7 +41,7 @@ public class Menu {
 
                             System.out.println("1 - Participante");
                             System.out.println("2 - Organizador");
-                            System.out.println("3 - Evento");
+                            System.out.println("3 - Evento (Mínimo um local cadastrado)");
                             System.out.println("4 - Local");
                             System.out.println("5 - Voltar");
 
