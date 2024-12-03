@@ -1099,7 +1099,7 @@ public class Menu {
                     System.out.println("\nOpção inválida");
                     break;
             }
-        } while (opcao != "6");
+        } while (opcao != "7");
         scanner.close();
     }
 } 
