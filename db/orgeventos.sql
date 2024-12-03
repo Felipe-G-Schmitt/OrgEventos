@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 02/12/2024 às 06:07
+-- Tempo de geração: 03/12/2024 às 14:41
 -- Versão do servidor: 10.4.32-MariaDB
 -- Versão do PHP: 8.2.12
 
@@ -34,6 +34,17 @@ CREATE TABLE `evento` (
   `data` date NOT NULL,
   `descricao` varchar(255) NOT NULL,
   `vagas` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `evento_organizador`
+--
+
+CREATE TABLE `evento_organizador` (
+  `id_evento` int(11) NOT NULL,
+  `id_organizador` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -77,6 +88,20 @@ CREATE TABLE `notificacao` (
 INSERT INTO `notificacao` (`id`, `tipo`) VALUES
 (1, 'Telefone'),
 (2, 'Email');
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `notificacaoenviada`
+--
+
+CREATE TABLE `notificacaoenviada` (
+  `id` int(11) NOT NULL,
+  `id_evento` int(11) NOT NULL,
+  `id_participante` int(11) NOT NULL,
+  `mensagem` varchar(255) NOT NULL,
+  `data_envio` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -126,6 +151,13 @@ ALTER TABLE `evento`
   ADD KEY `id_local` (`id_local`);
 
 --
+-- Índices de tabela `evento_organizador`
+--
+ALTER TABLE `evento_organizador`
+  ADD PRIMARY KEY (`id_evento`,`id_organizador`),
+  ADD KEY `id_organizador` (`id_organizador`);
+
+--
 -- Índices de tabela `evento_participante`
 --
 ALTER TABLE `evento_participante`
@@ -143,6 +175,14 @@ ALTER TABLE `local`
 --
 ALTER TABLE `notificacao`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Índices de tabela `notificacaoenviada`
+--
+ALTER TABLE `notificacaoenviada`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_evento` (`id_evento`),
+  ADD KEY `id_participante` (`id_participante`);
 
 --
 -- Índices de tabela `organizador`
@@ -172,7 +212,7 @@ ALTER TABLE `pessoa`
 -- AUTO_INCREMENT de tabela `evento`
 --
 ALTER TABLE `evento`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de tabela `local`
@@ -185,6 +225,12 @@ ALTER TABLE `local`
 --
 ALTER TABLE `notificacao`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT de tabela `notificacaoenviada`
+--
+ALTER TABLE `notificacaoenviada`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de tabela `pessoa`
@@ -204,11 +250,25 @@ ALTER TABLE `evento`
   ADD CONSTRAINT `evento_ibfk_2` FOREIGN KEY (`id_local`) REFERENCES `local` (`id`);
 
 --
+-- Restrições para tabelas `evento_organizador`
+--
+ALTER TABLE `evento_organizador`
+  ADD CONSTRAINT `evento_organizador_ibfk_1` FOREIGN KEY (`id_evento`) REFERENCES `evento` (`id`),
+  ADD CONSTRAINT `evento_organizador_ibfk_2` FOREIGN KEY (`id_organizador`) REFERENCES `organizador` (`id`);
+
+--
 -- Restrições para tabelas `evento_participante`
 --
 ALTER TABLE `evento_participante`
   ADD CONSTRAINT `evento_participante_ibfk_1` FOREIGN KEY (`id_evento`) REFERENCES `evento` (`id`),
   ADD CONSTRAINT `evento_participante_ibfk_2` FOREIGN KEY (`id_participante`) REFERENCES `participante` (`id`);
+
+--
+-- Restrições para tabelas `notificacaoenviada`
+--
+ALTER TABLE `notificacaoenviada`
+  ADD CONSTRAINT `notificacaoenviada_ibfk_1` FOREIGN KEY (`id_evento`) REFERENCES `evento` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `notificacaoenviada_ibfk_2` FOREIGN KEY (`id_participante`) REFERENCES `participante` (`id`) ON DELETE CASCADE;
 
 --
 -- Restrições para tabelas `organizador`

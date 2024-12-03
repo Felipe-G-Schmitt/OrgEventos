@@ -1,5 +1,3 @@
-import java.util.ArrayList;
-
 class Pessoa {
     private int id;
     private String nome;

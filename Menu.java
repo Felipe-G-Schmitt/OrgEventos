@@ -1,7 +1,6 @@
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Date;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -25,7 +24,8 @@ public class Menu {
             System.out.println("2 - Enviar Notificação");
             System.out.println("3 - Alterações");
             System.out.println("4 - Listas");
-            System.out.println("5 - Sair");
+            System.out.println("5 - Adicionar");
+            System.out.println("6 - Sair");
             
             System.out.println("\nDigite a opção desejada:");
             opcao = scanner.nextLine();
@@ -172,8 +172,88 @@ public class Menu {
                     break;
         
                 case "2": // Enviar Notificação
+                try {
+                    boolean voltarNotificacao = false;
+                    do {
+                    System.out.println("\n-=-=-=-=--=-==-=-=-=-=");
+                    System.out.println("Enviar Notificação");
+                    System.out.println("-=-=-=-=--=-==-=-=-=-=");
 
-                    break;
+                    System.out.println("1 - Enviar notificação");
+                    System.out.println("2 - Ver notifcação");
+                    System.out.println("3 - Voltar");
+
+                    System.out.println("\nDigite a opção desejada:");
+                    String opcaoCadastro = scanner.nextLine();
+                    System.out.println("\n");
+
+                    switch (opcaoCadastro) {
+                        case "1":
+                        try {
+                            System.out.println("Enviar Notificação");
+
+                            System.out.println("Digite o ID do evento:");
+                            int idEvento = scanner.nextInt();
+                            scanner.nextLine(); // Come \n
+                            System.out.println("Digite o ID do participante:");
+                            int idParticipante = scanner.nextInt();
+                            scanner.nextLine(); // Come \n
+                            System.out.println("Digite a mensagem da notificação:");
+                            String mensagem = scanner.nextLine();
+
+                            try (Connection connection = DriverManager.getConnection(url, user, password)) {
+                                Statement statement = connection.createStatement();
+                                statement.executeUpdate("INSERT INTO notificacaoenviada (id_evento, id_participante, mensagem) VALUES (" 
+                                                        + idEvento + ", " + idParticipante + ", '" + mensagem + "')");
+                                System.out.println("Notificação enviada com sucesso!");
+                            } catch (SQLException e) {
+                                System.out.println("Erro ao enviar a notificação: " + e.getMessage());
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+
+                        case "2":
+                        try {   
+                            System.out.println("Listagem de Notificações");
+                        
+                            Connection con = DriverManager.getConnection(url, user, password);
+                            Statement stm = con.createStatement();
+                            
+                            ResultSet sql = stm.executeQuery("SELECT * FROM notificacaoenviada;");
+                            
+                            // Verificar se há notificações e exibir
+                            while (sql.next()) {
+                                Notificacaoenviada notificacao = new Notificacaoenviada(
+                                    sql.getInt("id_evento"),
+                                    sql.getInt("id_participante"),
+                                    sql.getString("mensagem")
+                                );
+                                
+                                System.out.println("ID Evento: " + notificacao.getIdEvento() +
+                                                   " | ID Participante: " + notificacao.getIdParticipante() +
+                                                   " | Mensagem: " + notificacao.getMensagem());
+                            }
+                            
+                            con.close();
+                        } catch (SQLException e) {
+                            System.out.println("Erro ao listar notificações: " + e.getMessage());
+                        }                        
+                        break;
+
+                        case "3":
+                        System.out.println("Voltando...");
+                        voltarNotificacao = true;
+                        break;
+                    }
+
+
+                } while (!voltarNotificacao);
+                } catch (Exception e) {
+                    System.out.println("");
+                }
+                break;
 
                 case "3": // Alterações
                 try {
@@ -200,7 +280,7 @@ public class Menu {
 
                             System.out.println("Informe o ID de alteração: ");
                             int id = scanner.nextInt();
-                            scanner.nextLine(); // Consumir o newline
+                            scanner.nextLine();
                 
                             Connection con = DriverManager.getConnection(url, user, password);
                             Statement stm = con.createStatement();
@@ -276,7 +356,7 @@ public class Menu {
 
                             System.out.println("Informe o ID de alteração: ");
                             int id = scanner.nextInt();
-                            scanner.nextLine(); // Consumir o newline
+                            scanner.nextLine();
                 
                             Connection con = DriverManager.getConnection(url, user, password);
                             Statement stm = con.createStatement();
@@ -352,9 +432,8 @@ public class Menu {
                         
                             System.out.println("Informe o ID de alteração:");
                             int id = scanner.nextInt();
-                            scanner.nextLine(); // Consumir o newline
+                            scanner.nextLine(); 
                         
-                            // Primeira conexão para obter o evento pelo ID
                             Connection con = DriverManager.getConnection(url, user, password);
                             Statement stm = con.createStatement();
                             ResultSet rs = stm.executeQuery("SELECT * FROM evento WHERE id = " + id);
@@ -373,12 +452,12 @@ public class Menu {
                                 rs.getInt("vagas")
                             );
                         
-                            con.close(); // Fechando conexão após uso
+                            con.close(); 
                         
                             System.out.println("Informe o ID do organizador do evento (Deixar vazio para manter):");
                             String idOrganizador = scanner.nextLine();
                             if (!idOrganizador.isEmpty()) {
-                                con = DriverManager.getConnection(url, user, password); // Nova conexão
+                                con = DriverManager.getConnection(url, user, password); 
                                 stm = con.createStatement();
                                 rs = stm.executeQuery("SELECT id FROM organizador WHERE id = " + idOrganizador);
                                 if (!rs.next()) {
@@ -392,7 +471,7 @@ public class Menu {
                             System.out.println("Informe o ID do local do evento (Deixar vazio para manter):");
                             String idLocal = scanner.nextLine();
                             if (!idLocal.isEmpty()) {
-                                con = DriverManager.getConnection(url, user, password); // Nova conexão
+                                con = DriverManager.getConnection(url, user, password); 
                                 stm = con.createStatement();
                                 rs = stm.executeQuery("SELECT id FROM local WHERE id = " + idLocal);
                                 if (!rs.next()) {
@@ -400,14 +479,14 @@ public class Menu {
                                     throw new Exception("ID do local inválido. Não existe no banco de dados.");
                                 }
                                 evento.setIdLocal(Integer.parseInt(idLocal));
-                                con.close(); // Fechando conexão
+                                con.close();
                             }
                         
                             System.out.println("Informe a data do evento (formato yyyy-mm-dd, deixar vazio para manter):");
                             String dataInput = scanner.nextLine();
                             if (!dataInput.isEmpty()) {
                                 try {
-                                    Date novaData = Date.valueOf(dataInput); // Converte para java.sql.Date
+                                    Date novaData = Date.valueOf(dataInput);
                                     evento.setData(novaData);
                                 } catch (IllegalArgumentException e) {
                                     System.out.println("Formato de data inválido. Use o formato yyyy-mm-dd.");
@@ -427,7 +506,7 @@ public class Menu {
                             }
                         
                             // Atualização do evento no banco
-                            con = DriverManager.getConnection(url, user, password); // Nova conexão
+                            con = DriverManager.getConnection(url, user, password);
                             stm = con.createStatement();
                         
                             String updateQuery = String.format(
@@ -448,7 +527,7 @@ public class Menu {
                                 System.out.println("Falha na atualização do evento.");
                             }
                         
-                            con.close(); // Fechar a conexão após uso
+                            con.close(); 
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -461,7 +540,7 @@ public class Menu {
 
                             System.out.println("Informe o ID de alteração: ");
                             int id = scanner.nextInt();
-                            scanner.nextLine(); // Consumir o newline
+                            scanner.nextLine(); 
                 
                             Connection con = DriverManager.getConnection(url, user, password);
                             Statement stm = con.createStatement();
@@ -533,7 +612,9 @@ public class Menu {
                     System.out.println("2 - Organizador");
                     System.out.println("3 - Evento");
                     System.out.println("4 - Local");
-                    System.out.println("5 - Voltar");
+                    System.out.println("5 - Listar participantes em eventos");
+                    System.out.println("6 - Listar organizadores em eventos");
+                    System.out.println("7 - Voltar");
                     String opcaoCadastro = scanner.nextLine();
                     switch (opcaoCadastro) {
                         case "1":
@@ -613,7 +694,7 @@ public class Menu {
                                     sql.getInt("id"),
                                     sql.getInt("id_organizador"),
                                     sql.getInt("id_local"),
-                                    sql.getDate("data"), // Usa java.sql.Date corretamente
+                                    sql.getDate("data"),
                                     sql.getString("descricao"),
                                     sql.getInt("vagas")
                                 );
@@ -656,6 +737,112 @@ public class Menu {
                         break;
 
                         case "5":
+                        try {
+                            System.out.println("Listar participantes de um evento:");
+
+                            System.out.println("Informe o ID do evento:");
+                            int idEvento = scanner.nextInt();
+                            scanner.nextLine(); 
+
+                            try (Connection con = DriverManager.getConnection(url, user, password);
+                                Statement stm = con.createStatement()) {
+
+                                ResultSet rs = stm.executeQuery("SELECT * FROM evento WHERE id = " + idEvento);
+                                if (!rs.next()) {
+                                    throw new Exception("Evento não encontrado com o ID informado.");
+                                }
+
+                                System.out.println("Evento encontrado:");
+                                System.out.println("ID: " + rs.getInt("id"));
+                                System.out.println("Descrição: " + rs.getString("descricao"));
+                                System.out.println("Data: " + rs.getDate("data"));
+                                System.out.println("Local: " + rs.getInt("id_local"));
+
+                                String query = "SELECT pe.id, pe.nome, pa.telefone " +
+                                            "FROM evento_participante ep " +
+                                            "JOIN participante pa ON ep.id_participante = pa.id " +
+                                            "JOIN pessoa pe ON pa.id = pe.id " +
+                                            "WHERE ep.id_evento = " + idEvento;
+
+                                rs = stm.executeQuery(query);
+
+                                System.out.println("\nParticipantes no evento:");
+                                boolean hasParticipants = false;
+
+                                while (rs.next()) {
+                                    hasParticipants = true;
+                                    System.out.println("- ID: " + rs.getInt("id"));
+                                    System.out.println("  Nome: " + rs.getString("nome"));
+                                    System.out.println("  Telefone: " + rs.getString("telefone"));
+                                    System.out.println();
+                                }
+
+                                if (!hasParticipants) {
+                                    System.out.println("Nenhum participante encontrado neste evento.");
+                                }
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }                        
+                        break;
+
+                        case "6":
+                        try {
+                            System.out.println("Listar organizadores de um evento:");
+
+                            System.out.println("Informe o ID do evento:");
+                            int idEvento = scanner.nextInt();
+                            scanner.nextLine(); 
+
+                            try (Connection con = DriverManager.getConnection(url, user, password);
+                                Statement stm = con.createStatement()) {
+
+                                ResultSet rs = stm.executeQuery("SELECT * FROM evento WHERE id = " + idEvento);
+                                if (!rs.next()) {
+                                    throw new Exception("Evento não encontrado com o ID informado.");
+                                }
+
+                                System.out.println("Evento encontrado:");
+                                System.out.println("ID: " + rs.getInt("id"));
+                                System.out.println("Descrição: " + rs.getString("descricao"));
+                                System.out.println("Data: " + rs.getDate("data"));
+                                System.out.println("Local: " + rs.getInt("id_local"));
+
+                                String query = "SELECT pe.id, pe.nome, o.email " +
+                                            "FROM evento_organizador eo " +
+                                            "JOIN organizador o ON eo.id_organizador = o.id " +
+                                            "JOIN pessoa pe ON o.id = pe.id " +
+                                            "WHERE eo.id_evento = " + idEvento;
+
+                                rs = stm.executeQuery(query);
+
+                                System.out.println("\nOrganizadores no evento:");
+                                boolean hasOrganizers = false;
+
+                                while (rs.next()) {
+                                    hasOrganizers = true;
+                                    System.out.println("- ID: " + rs.getInt("id"));
+                                    System.out.println("  Nome: " + rs.getString("nome"));
+                                    System.out.println("  Email: " + rs.getString("email"));
+                                    System.out.println();
+                                }
+
+                                if (!hasOrganizers) {
+                                    System.out.println("Nenhum organizador encontrado neste evento.");
+                                }
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+
+                        case "7":
                         System.out.println("Voltando...");
                         voltarListas = true;
                         break;
@@ -666,7 +853,140 @@ public class Menu {
                 }
                 break;
 
-                case "5": // Sair
+                case "5": // Adicionar
+                boolean AddCadastro = false; 
+                do {
+                    System.out.println("\n-=-=-=-=--=-==-=-=-=-=");
+                    System.out.println("Adicionar ao Evento");
+                    System.out.println("-=-=-=-=--=-==-=-=-=-=");
+        
+                    System.out.println("1 - Participante");
+                    System.out.println("2 - Organizador");
+                    System.out.println("3 - Sair");
+                    
+                    String opcaoAdd = "0";
+                    System.out.println("\nDigite a opção desejada:");
+                    opcaoAdd = scanner.nextLine();
+                    
+                    switch (opcaoAdd) {
+                        case "1": // Adicionar Participante
+                            try {
+                                try {
+                                    System.out.println("Adicionando participante a um evento:");
+                                
+                                    System.out.println("Informe o ID do evento:");
+                                    int idEvento = scanner.nextInt();
+                                    scanner.nextLine(); 
+                                
+                                    System.out.println("Informe o ID do participante:");
+                                    int idParticipante = scanner.nextInt();
+                                    scanner.nextLine(); 
+                                
+                                    Connection con = DriverManager.getConnection(url, user, password);
+                                    Statement stm = con.createStatement();
+                                    ResultSet rs = stm.executeQuery("SELECT * FROM evento WHERE id = " + idEvento);
+                                
+                                    if (!rs.next()) {
+                                        con.close();
+                                        throw new Exception("Evento não encontrado com o ID informado.");
+                                    }
+                                
+                                    rs = stm.executeQuery("SELECT * FROM participante WHERE id = " + idParticipante);
+                                
+                                    if (!rs.next()) {
+                                        con.close();
+                                        throw new Exception("Participante não encontrado com o ID informado.");
+                                    }
+                                
+                                    rs = stm.executeQuery("SELECT * FROM evento_participante WHERE id_evento = " + idEvento + " AND id_participante = " + idParticipante);
+                                
+                                    if (rs.next()) {
+                                        con.close();
+                                        throw new Exception("O participante já está registrado neste evento.");
+                                    }
+                                
+                                    String insertQuery = String.format(
+                                        "INSERT INTO evento_participante (id_evento, id_participante) VALUES (%d, %d)",
+                                        idEvento, idParticipante
+                                    );
+                                
+                                    int rowsAffected = stm.executeUpdate(insertQuery);
+                                
+                                    if (rowsAffected > 0) {
+                                        System.out.println("Participante adicionado ao evento com sucesso!");
+                                    } else {
+                                        System.out.println("Falha ao adicionar o participante ao evento.");
+                                    }
+                                
+                                    con.close(); 
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }                                
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        case "2": // Adicionar Organizador
+                            try {
+                                System.out.println("Adicionando organizador a um evento:");
+                                
+                                System.out.println("Informe o ID do evento:");
+                                int idEvento = scanner.nextInt();
+                                scanner.nextLine(); 
+                                
+                                System.out.println("Informe o ID do organizador:");
+                                int idOrganizador = scanner.nextInt();
+                                scanner.nextLine(); 
+                                
+                                Connection con = DriverManager.getConnection(url, user, password);
+                                Statement stm = con.createStatement();
+                                ResultSet rs = stm.executeQuery("SELECT * FROM evento WHERE id = " + idEvento);
+                                
+                                if (!rs.next()) {
+                                    con.close();
+                                    throw new Exception("Evento não encontrado com o ID informado.");
+                                }
+                                
+                                rs = stm.executeQuery("SELECT * FROM organizador WHERE id = " + idOrganizador);
+                                
+                                if (!rs.next()) {
+                                    con.close();
+                                    throw new Exception("Organizador não encontrado com o ID informado.");
+                                }
+                                
+                                rs = stm.executeQuery("SELECT * FROM evento_organizador WHERE id_evento = " + idEvento + " AND id_organizador = " + idOrganizador);
+                                
+                                if (rs.next()) {
+                                    con.close();
+                                    throw new Exception("O organizador já está registrado neste evento.");
+                                }
+                                
+                                String insertQuery = String.format(
+                                    "INSERT INTO evento_organizador (id_evento, id_organizador) VALUES (%d, %d)",
+                                    idEvento, idOrganizador
+                                );
+                                
+                                int rowsAffected = stm.executeUpdate(insertQuery);
+                                
+                                if (rowsAffected > 0) {
+                                    System.out.println("Organizador adicionado ao evento com sucesso!");
+                                } else {
+                                    System.out.println("Falha ao adicionar o organizador ao evento.");
+                                }
+                                
+                                con.close(); 
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                        case "3": // Sair
+                            System.out.println("\nVoltando...");
+                            AddCadastro = true;
+                            break;
+                    }   	
+                } while (!AddCadastro);
+                break;             
+
+                case "6": // Sair
                 System.out.println("\nSaindo...");
                 break;
 
@@ -674,7 +994,7 @@ public class Menu {
                     System.out.println("\nOpção inválida");
                     break;
             }
-        } while (opcao != "5");
+        } while (opcao != "6");
         scanner.close();
     }
-}
+} // Perfeitamente nas 1000 linhas 
